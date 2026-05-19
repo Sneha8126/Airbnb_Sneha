@@ -3,6 +3,10 @@ const Review = require("./models/review");
 const { listingSchema, reviewSchema } = require("./schema.js");
 const ExpressError = require("./utils/ExpressError.js");
 
+export const config = {
+  runtime: 'nodejs', // Yeh line Vercel ko batayegi ki Edge nahi, full Node.js use karna hai
+};
+
 // 1. Check if User is Logged In
 module.exports.isLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
