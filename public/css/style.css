@@ -1,0 +1,400 @@
+/* ==========================================================================
+   WANDERLUST PREMIUM FULL-STACK INTERACTIVE CORE FRAMEWORK
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --brand-color: #fe424d;
+    --brand-hover: #e0313a;
+    --dark-neutral: #1a1a1a;
+    --light-bg: #f8f9fa;
+    --border-glow: rgba(254, 66, 77, 0.25);
+    --hover-shadow: 0 20px 35px rgba(0, 0, 0, 0.08);
+    --smooth-curve: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --- 1. GLOBAL LAYOUT SYSTEM & ANIMATIONS --- */
+body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    background-color: #ffffff;
+    color: var(--dark-neutral);
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Smooth fade-in presentation effect whenever any page mounts */
+main {
+    animation: pageReveal 0.5s var(--smooth-curve) forwards;
+}
+
+@keyframes pageReveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+    flex: 1 !important;
+}
+
+.all-listings-title {
+    margin-left: 20px;
+}
+
+/* --- 2. LUXURY TRANSLUCENT NAVBAR (Glassmorphism & Interactive Links) --- */
+.navbar {
+    height: 5rem;
+    padding: 0.8rem 0 !important;
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+}
+
+.fa-compass-drafting {
+    color: var(--brand-color);
+    font-size: 2rem;
+}
+
+.nav-link {
+    color: var(--dark-neutral) !important;
+    font-size: 1rem !important;
+    font-weight: 500;
+    position: relative;
+    padding: 0.5rem 1rem !important;
+    border-radius: 20px;
+    transition: all 0.3s var(--smooth-curve) !important;
+}
+
+.nav-link:hover {
+    color: var(--brand-color) !important;
+    background-color: var(--light-bg);
+    transform: scale(1.05);
+}
+
+/* --- 3. ADVANCED CATEGORY FILTERS SYSTEM --- */
+#filters-box {
+    padding: 0.5rem 0;
+    gap: 2.2rem !important;
+}
+
+.filter-link {
+    text-align: center;
+    opacity: 0.55;
+    text-decoration: none !important;
+    color: #222222 !important;
+    transition: all 0.3s var(--smooth-curve);
+    padding-bottom: 0.3rem;
+    position: relative;
+}
+
+.filter-link i {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.filter-link p {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+}
+
+/* Slide-in indicator timeline animation for category links */
+.filter-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2.5px;
+    background-color: var(--brand-color);
+    transition: all 0.3s var(--smooth-curve);
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.filter-link:hover, .filter-active {
+    opacity: 1 !important;
+    color: var(--brand-color) !important;
+    transform: translateY(-3px);
+}
+
+.filter-link:hover::after, .filter-active::after {
+    width: 80%;
+}
+
+/* --- 4. HIGH-END GRID LANDING CARDS (With Staggered Animations) --- */
+.listing-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.listing-card {
+    background: #ffffff;
+    border: none !important;
+    margin-bottom: 2rem;
+    border-radius: 1.5rem !important; 
+    overflow: hidden;
+    transition: transform 0.4s var(--smooth-curve), box-shadow 0.4s var(--smooth-curve) !important;
+}
+
+.card-img-top {
+    border-radius: 1.5rem !important;
+    width: 100% !important;
+    height: 18rem;
+    object-fit: cover !important;
+    transition: transform 0.6s var(--smooth-curve) !important;
+}
+
+.card-body {
+    padding: 0.5rem 0.25rem !important;
+}
+
+.card-text p {
+    font-weight: 400 !important;
+}
+
+/* Advanced Interactive Animations Matrix */
+.listing-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: var(--hover-shadow) !important;
+}
+
+.listing-card:hover .card-img-top {
+    transform: scale(1.035) !important;
+}
+
+.card-img-overlay {
+    opacity: 0;
+    border-radius: 1.5rem !important;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.listing-card:hover .card-img-overlay {
+    opacity: 0.15;
+    background: linear-gradient(to bottom, rgba(254, 66, 77, 0.1), rgba(0, 0, 0, 0.4));
+}
+
+.listing-card button i {
+    transition: transform 0.2s var(--smooth-curve);
+}
+.listing-card button:hover i {
+    transform: scale(1.25);
+}
+
+/* Staggered loading loop sequence animation for landing catalog cards */
+.row-cols-lg-3 .col {
+    opacity: 0;
+    animation: cardFadeIn 0.6s var(--smooth-curve) forwards;
+}
+
+.row-cols-lg-3 .col:nth-child(1) { animation-delay: 0.05s; }
+.row-cols-lg-3 .col:nth-child(2) { animation-delay: 0.10s; }
+.row-cols-lg-3 .col:nth-child(3) { animation-delay: 0.15s; }
+.row-cols-lg-3 .col:nth-child(4) { animation-delay: 0.20s; }
+.row-cols-lg-3 .col:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 5. ULTRA-MODERN INPUT CONTROLS GLOW (All Forms) --- */
+.form-control, .form-select {
+    border-radius: 0.75rem !important;
+    padding: 0.65rem 1rem !important;
+    border: 1px solid #dde1e5 !important;
+    background-color: var(--light-bg);
+    transition: all 0.3s var(--smooth-curve) !important;
+}
+
+.form-control:hover, .form-select:hover {
+    border-color: #b2b2b2 !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: #ffffff !important;
+    border-color: var(--brand-color) !important;
+    box-shadow: 0 0 0 4px var(--border-glow) !important;
+    transform: translateY(-1px);
+}
+
+/* Smooth placeholder tracking translation effect */
+.form-control::placeholder {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    transition: transform 0.2s ease;
+}
+
+.form-control:focus::placeholder {
+    transform: translateX(4px);
+    opacity: 0.4;
+}
+
+/* --- 6. PREMIUM PILL UTILITY BUTTONS --- */
+.btn-danger, .add-btn, .edit-btn, .btn-dark {
+    border-radius: 50px !important; 
+    font-weight: 600 !important;
+    padding: 0.7rem 2rem !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s var(--smooth-curve) !important;
+    letter-spacing: 0.3px;
+}
+
+.btn-danger, .add-btn, .edit-btn {
+    background: linear-gradient(135deg, #fe424d 0%, #e0313a 100%) !important;
+    border: none !important;
+    color: white !important;
+}
+
+.btn-danger:hover, .add-btn:hover, .edit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(254, 66, 77, 0.4) !important;
+}
+
+.btns {
+    display: flex;
+}
+
+/* --- 7. MISCELLANEOUS COMPONENT ENHANCEMENTS --- */
+.tax-toggle {
+    border: 1px solid #ced4da;
+    border-radius: 1rem;
+    height: 3.25rem;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.bg-light.p-3.rounded-4, .card.col-md-5.border {
+    background: rgba(248, 249, 250, 0.65) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1.25rem !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.show-img {
+    height: 30vh;
+}
+
+.show-card {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* --- 8. FOOTER ECO-ALIGNMENT CONFIGURATION --- */
+footer {
+    width: 100%;
+    margin-top: auto; 
+}
+
+.f-info {
+    text-align: center;
+    height: 8rem;
+    background-color: #f7f7f7; 
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-content: space-around;
+}
+
+.f-info-links a {
+    text-decoration: none;
+    color: #484848;
+    transition: color 0.2s ease;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+    color: var(--brand-color);
+}
+
+.f-info-links, .f-info-socials, .f-info-brand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.f-info-socials i {
+    font-size: 1.2rem;
+    margin-right: 1.2rem;
+    color: #222222;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.f-info-socials i:hover {
+    transform: scale(1.15);
+    color: var(--brand-color);
+}
+
+/* Custom typography modifiers for show page text matrix area */
+.fw-extrabold {
+    font-weight: 800 !important;
+}
+
+.tracking-tight {
+    letter-spacing: -0.5px;
+}
+
+.tracking-wider {
+    letter-spacing: 0.8px;
+}
+
+/* Host User profile container drop effect animation */
+.host-avatar-frame {
+    transition: transform 0.3s var(--smooth-curve);
+}
+
+.host-avatar-frame:hover {
+    transform: rotate(8deg) scale(1.05);
+}
+
+/* Base Price box hover interaction */
+.bg-light.p-3.rounded-4 {
+    transition: all 0.3s var(--smooth-curve);
+}
+
+.bg-light.p-3.rounded-4:hover {
+    background-color: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* --- 9. ULTRA-PREMIUM TYPOGRAPHY ENHANCEMENTS --- */
+
+.option-heading-style {
+    font-size: 1.2rem !important;
+    letter-spacing: -0.2px;
+    color: #1a1a1a !important;
+}
+
+.dynamic-description-text {
+    font-size: 1.05rem !important;
+    font-weight: 400 !important;
+    line-height: 1.75 !important;               /* Enhances paragraph readability significantly */
+    color: #5e5e5e !important;                 /* Premium charcoal gray color token for long text */
+    letter-spacing: -0.05px !important;
+    text-align: justify;                       /* Aligns text boundaries perfectly on card panels */
+    margin-top: 0.5rem;
+    max-width: 95%;
+}
+
+/* Custom warning helper class for text block context */
+.bg-warning-subtle {
+    background-color: rgba(255, 193, 7, 0.08) !important;
+}
+.text-warning-heading {
+    color: #856404 !important;
+}

@@ -1,0 +1,156 @@
+<% layout("/layouts/boilerplate") %>
+
+<style>
+    .receipt-card {
+        border: 2px dashed #dee2e6;
+        background-color: #fff;
+    }
+    .success-icon {
+        font-size: 4rem;
+        color: #2ec4b6;
+    }
+    
+    /* Printing Layout Overrides: Only prints the receipt card block */
+    @media print {
+        body * {
+            visibility: hidden;
+        }
+        .receipt-card, .receipt-card * {
+            visibility: visible;
+        }
+        .receipt-card {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            border: none;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 text-center no-print mb-3">
+            <div class="success-icon mb-2">
+                <i class="fa-solid fa-circle-check animate__animated animate__zoomIn"></i>
+            </div>
+            <h2 class="fw-bold text-dark">Booking Confirmed!</h2>
+            <p class="text-muted">Thank you for booking with Wanderlust. Your transaction was successful.</p>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card receipt-card p-5 shadow-sm rounded-4">
+                <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                    <div>
+                        <h3 class="fw-bold text-danger mb-0">Wanderlust Inc.</h3>
+                        <small class="text-muted">E-Receipt & Booking Confirmation</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-success-subtle text-success border border-success px-3 py-2 rounded-pill fw-bold">PAID</span>
+                    </div>
+                </div>
+
+              <div class="row mb-4">
+    <div class="col-6">
+        <small class="text-muted d-block text-uppercase fw-semibold">Billed To (Guest Details):</small>
+        <h5 class="fw-bold mt-1 text-dark mb-0"><%= guestName %></h5>
+        <small class="text-muted d-block"><i class="fa-regular fa-envelope"></i> <%= guestEmail %></small>
+        <small class="text-muted d-block"><i class="fa-solid fa-phone-flip small"></i> +91 <%= guestPhone %></small>
+    </div>
+    <div class="col-6 text-end">
+        <small class="text-muted d-block text-uppercase fw-semibold">Receipt Number:</small>
+        <strong class="text-dark">WL-<%= Date.now().toString().slice(-6) %></strong>
+        <small class="text-muted d-block mt-1">Date: <%= new Date().toLocaleDateString("en-IN") %></small>
+    </div>
+</div>
+
+                <div class="bg-light p-3 rounded-3 mb-4">
+                    <h6 class="fw-bold text-secondary mb-2">Destination Details</h6>
+                    <h5 class="fw-bold text-dark mb-1"><%= listing.title %></h5>
+                    <p class="text-muted small mb-0"><i class="fa-solid fa-location-dot text-danger"></i> <%= listing.location %>, <%= listing.country %></p>
+                </div>
+
+                <div class="row border-bottom pb-4 mb-4 text-center">
+                    <div class="col-5 bg-light-subtle p-2 border rounded-3">
+                        <small class="text-muted d-block fw-semibold">CHECK-IN</small>
+                        <span class="fw-bold text-dark"><%= startDate %></span>
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-center">
+                        <i class="fa-solid fa-arrow-right text-muted fs-5"></i>
+                    </div>
+                    <div class="col-5 bg-light-subtle p-2 border rounded-3">
+                        <small class="text-muted d-block fw-semibold">CHECK-OUT</small>
+                        <span class="fw-bold text-dark"><%= endDate %></span>
+                    </div>
+                </div>
+
+                <table class="table table-borderless mb-4">
+                    <thead>
+                        <tr class="border-bottom text-muted small">
+                            <th>Description</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-dark fw-semibold">Accommodation Charges (Stay Packages)</td>
+                            <td class="text-end fw-bold text-dark">₹<%= Number(totalPrice).toLocaleString("en-IN") %></td>
+                        </tr>
+                        <tr>
+                            <td class="text-muted">Taxes & Platform GST Service Fee</td>
+                            <td class="text-end text-muted">₹0.00 (Inclusive)</td>
+                        </tr>
+                        <tr class="border-top fs-5 fw-bold">
+                            <td class="text-danger pt-3">Total Amount Settled:</td>
+                            <td class="text-end text-danger pt-3">₹<%= Number(totalPrice).toLocaleString("en-IN") %></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="border-top pt-3 bg-light p-3 rounded-3 text-start small">
+                    <span class="d-block text-muted"><strong>Razorpay Payment ID:</strong> <code class="text-dark"><%= payment_id %></code></span>
+                    <span class="d-block text-muted mt-1"><strong>Status:</strong> Digital Transaction Captured Successfully</span>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4 no-print">
+                <a href="/listings" class="btn btn-outline-dark px-4 rounded-3">
+                    <i class="fa-solid fa-house"></i> Back to Home
+                </a>
+                
+                <div>
+                    <button id="download-btn" class="btn btn-success px-4 rounded-3 fw-bold me-2">
+                        <i class="fa-solid fa-download"></i> Download PDF
+                    </button>
+                    <button onclick="window.print()" class="btn btn-danger px-4 rounded-3 fw-bold">
+                        <i class="fa-solid fa-print"></i> Print E-Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    // Client-Side Blueprint Canvas Capture to File Stream Execution
+    document.getElementById("download-btn").addEventListener("click", () => {
+        const element = document.querySelector(".receipt-card");
+        
+        // Advanced Output formatting profile parameters mapping
+        const opt = {
+            margin:       0.4,
+            filename:     'Wanderlust-Booking-Receipt.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true }, // Higher rendering rendering scale factor 
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+
+        // Action trigger pipeline command
+        html2pdf().set(opt).from(element).save();
+    });
+</script>

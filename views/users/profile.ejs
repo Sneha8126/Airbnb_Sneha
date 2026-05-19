@@ -1,0 +1,204 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+    <div class="row g-4 dashboard-wrapper-layout">
+        
+        <div class="col-md-4">
+            <div class="card profile-glass-card border-0 p-4 text-center h-100 position-relative overflow-hidden shadow-sm">
+                <div class="profile-accent-glow"></div>
+                
+                <div class="position-relative z-3">
+                    <div class="mb-3">
+                        <div class="avatar-ring mx-auto d-flex align-items-center justify-content-center bg-danger text-white fw-bold">
+                            <%= currUser.username.charAt(0).toUpperCase() %>
+                        </div>
+                    </div>
+                    
+                    <h4 class="fw-bold text-dark mb-1">@<%= currUser.username %></h4>
+                    <p class="text-muted font-monospace small mb-4">
+                        <i class="fa-regular fa-envelope me-1"></i> <%= currUser.email %>
+                    </p>
+                    
+                    <div class="border-top pt-3 mt-2">
+                        <% if (currUser.role === 'host') { %>
+                            <span class="badge rounded-pill bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 fw-bold tracking-wider" style="font-size: 0.75rem;">
+                                <i class="fa-solid fa-hotel me-1"></i> ACCOUNT: HOST OPERATOR
+                            </span>
+                        <% } else { %>
+                            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-2 fw-bold tracking-wider" style="font-size: 0.75rem;">
+                                <i class="fa-solid fa-shield-cat me-1"></i> ACCOUNT: STANDARD GUEST
+                            </span>
+                        <% } %>
+                    </div>
+                    
+                    <div class="row g-2 text-start px-2 mt-4 pt-2 border-top border-light">
+                        <div class="col-6">
+                            <small class="text-muted d-block small-header font-monospace">METRICS</small>
+                            <span class="fw-bold text-dark small"><%= currUser.wishlist ? currUser.wishlist.length : 0 %> Wishlists</span>
+                        </div>
+                        <div class="col-6">
+                            <small class="text-muted d-block small-header font-monospace">SECURITY</small>
+                            <span class="badge bg-light text-dark border rounded-2 small fw-semibold py-1">SSL Active</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            
+            <% if (currUser.role === 'host') { %>
+                
+                <h3 class="fw-bold text-dark mb-4 d-flex align-items-center">
+                    <i class="fa-solid fa-hotel text-primary me-2.5"></i> Reservations on Your Properties
+                </h3>
+                
+                <% if(hostBookings && hostBookings.length > 0) { %>
+                    <div class="row mb-5">
+                        <% for(let booking of hostBookings) { %>
+                            <% if(booking.listing) { %> 
+                                <div class="col-12 mb-4"> 
+                                    <div class="card listing-card shadow-sm border border-primary-subtle rounded-4 overflow-hidden h-100 transition-all shadow-sm-hover">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-sm-4 position-relative overflow-hidden" style="height: 170px;">
+                                                <img src="<%= booking.listing.image && booking.listing.image.length > 0 ? booking.listing.image[0].url : 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60' %>" class="img-fluid h-100 w-100 object-fit-cover card-img-top rounded-0" style="height: 100% !important;" alt="property_img">
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="card-body ps-sm-4 py-3 pe-3 bg-white"> 
+                                                    <span class="badge bg-primary-subtle text-primary mb-2 small fw-bold">Incoming Destination Booking</span>
+                                                    <h5 class="card-title fw-bold text-dark mb-1"><%= booking.listing.title %></h5>
+                                                    <p class="text-muted small mb-2">
+                                                        <i class="fa-regular fa-user text-secondary"></i> <strong>Guest:</strong> @<%= booking.user.username %> (<%= booking.user.email %>)
+                                                    </p>
+                                                    <div class="row mb-3 text-secondary small">
+                                                        <div class="col-6"><i class="fa-regular fa-calendar text-muted me-1"></i><strong>In:</strong> <%= new Date(booking.startDate).toLocaleDateString("en-IN") %></div>
+                                                        <div class="col-6"><i class="fa-regular fa-calendar text-muted me-1"></i><strong>Out:</strong> <%= new Date(booking.endDate).toLocaleDateString("en-IN") %></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                                        <span class="text-success fw-bold fs-5">Net Revenue: ₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+                                                        <div class="d-flex gap-2 align-items-center">
+                                                            <span class="badge bg-success text-white rounded-pill px-3 py-1.5 small fw-semibold">Confirmed</span>
+                                                            <form method="POST" action="/listings/<%= booking.listing._id %>/bookings/<%= booking._id %>?_method=DELETE" onsubmit="return confirm('Are you sure you want to decline this guest reservation?');">
+                                                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fw-bold" style="font-size: 0.75rem;">
+                                                                    <i class="fa-solid fa-ban text-danger me-1"></i> Decline
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-4 border rounded-4 bg-light mb-5 border-dashed">
+                        <div class="text-muted fs-2 mb-2"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                        <h6 class="fw-bold text-secondary mb-1">No reservations yet!</h6>
+                        <p class="text-muted small mb-0">When guests book your stays, entries will flash here.</p>
+                    </div>
+                <% } %>
+
+                <hr class="my-5 border-light-subtle">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold text-dark m-0 d-flex align-items-center">
+                        <i class="fa-solid fa-house-chimney-window text-danger me-2.5"></i> Your Listed Properties
+                    </h3>
+                    <a href="/listings/new" class="btn btn-sm btn-danger rounded-pill px-3 fw-bold shadow-sm">
+                        <i class="fa-solid fa-plus me-1"></i> Add New Property
+                    </a>
+                </div>
+
+                <% if(hostListings && hostListings.length > 0) { %>
+                    <div class="row row-cols-1 row-cols-sm-2 g-3">
+                        <% for(let listing of hostListings) { %>
+                            <div class="col">
+                                <div class="card h-100 border border-light-subtle rounded-4 overflow-hidden shadow-sm transition-all shadow-sm-hover">
+                                    <div class="position-relative" style="height: 160px;">
+                                        <img src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60' %>" class="w-100 h-100 object-fit-cover" alt="listing_img">
+                                        <span class="position-absolute top-3 start-3 badge bg-dark bg-opacity-75 rounded-pill px-2.5 py-1 font-monospace" style="font-size: 0.7rem;">
+                                            <%= listing.category %>
+                                        </span>
+                                    </div>
+                                    <div class="card-body p-3 bg-white d-flex flex-column justify-content-between">
+                                        <div>
+                                            <h6 class="fw-bold text-dark text-truncate mb-1"><%= listing.title %></h6>
+                                            <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot text-danger me-1"></i><%= listing.location %>, <%= listing.country %></p>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                                            <span class="fw-bold text-dark small">₹<%= listing.price.toLocaleString("en-IN") %> <small class="text-muted fw-normal">/night</small></span>
+                                            <a href="/listings/<%= listing._id %>" class="btn btn-xs btn-outline-danger rounded-pill px-2.5 py-1 fw-bold" style="font-size: 0.7rem;">
+                                                View Page <i class="fa-solid fa-arrow-right ms-0.5"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5 border rounded-4 bg-light border-dashed">
+                        <div class="text-muted fs-1 mb-2"><i class="fa-solid fa-house-laptop"></i></div>
+                        <h5 class="fw-bold text-secondary mb-1">You haven't listed any properties yet!</h5>
+                        <p class="text-muted small mb-3">Start hosting by adding your first dynamic stay destination profile.</p>
+                        <a href="/listings/new" class="btn btn-danger btn-sm px-4 rounded-pill fw-bold shadow-sm">Create First Listing</a>
+                    </div>
+                <% } %>
+
+            <% } else { %>
+                <h3 class="fw-bold text-dark mb-4 d-flex align-items-center">
+                    <i class="fa-solid fa-clock-rotate-left text-danger me-2.5"></i> Your Booking History
+                </h3>
+                
+                <% if(guestBookings && guestBookings.length > 0) { %>
+                    <div class="row">
+                        <% for(let booking of guestBookings) { %>
+                            <% if(booking.listing) { %> 
+                                <div class="col-12 mb-4"> 
+                                    <div class="card listing-card shadow-sm border border-light-subtle rounded-4 overflow-hidden h-100 transition-all shadow-sm-hover">
+                                        <div class="row g-0 align-items-center">
+                                            <div class="col-sm-4 position-relative overflow-hidden" style="height: 170px;">
+                                                <img src="<%= booking.listing.image && booking.listing.image.length > 0 ? booking.listing.image[0].url : 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60' %>" class="img-fluid h-100 w-100 object-fit-cover card-img-top rounded-0" style="height: 100% !important;" alt="property_img">
+                                            </div>
+                                            <div class="col-sm-8">
+                                                <div class="card-body ps-sm-4 py-3 pe-3 bg-white"> 
+                                                    <h5 class="card-title fw-bold text-dark mb-1"><%= booking.listing.title %></h5>
+                                                    <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot text-danger"></i> <%= booking.listing.location %>, <%= booking.listing.country %></p>
+                                                    <div class="row mb-3 text-secondary small">
+                                                        <div class="col-6"><i class="fa-regular fa-calendar text-muted me-1"></i><strong>Check-In:</strong> <%= new Date(booking.startDate).toLocaleDateString("en-IN") %></div>
+                                                        <div class="col-6"><i class="fa-regular fa-calendar text-muted me-1"></i><strong>Check-Out:</strong> <%= new Date(booking.endDate).toLocaleDateString("en-IN") %></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                                        <span class="text-danger fw-bold fs-5">Invested Price: ₹<%= booking.totalPrice.toLocaleString("en-IN") %></span>
+                                                        <div class="d-flex gap-2 align-items-center">
+                                                            <span class="badge bg-success-subtle text-success border border-success rounded-pill px-3 py-1.5 small fw-semibold">Stay Confirmed</span>
+                                                            <form method="POST" action="/listings/<%= booking.listing._id %>/bookings/<%= booking._id %>?_method=DELETE" onsubmit="return confirm('Are you absolutely sure you want to cancel this reservation?');">
+                                                                <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1.5 fw-bold" style="font-size: 0.75rem;">
+                                                                    <i class="fa-solid fa-rectangle-xmark text-danger me-1"></i> Cancel Trip
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        <% } %>
+                    </div>
+                <% } else { %>
+                    <div class="text-center py-5 border rounded-4 bg-light empty-trips-box border-dashed">
+                        <div class="floating-luggage-icon mb-3"><i class="fa-solid fa-suitcase-rolling text-secondary-subtle"></i></div>
+                        <h5 class="fw-bold text-dark mb-1">No trips booked yet!</h5>
+                        <p class="text-secondary small mx-auto mb-3" style="max-width: 360px;">Explore premium global architectural stays and establish your first secure digital accommodation profile.</p>
+                        <a href="/listings" class="btn btn-danger btn-sm px-4 py-2 rounded-pill fw-bold shadow-sm"><i class="fa-solid fa-magnifying-glass me-1"></i> Browse Properties</a>
+                    </div>
+                <% } %>
+            <% } %>
+
+        </div>
+    </div>
+</div>

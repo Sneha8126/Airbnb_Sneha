@@ -1,0 +1,44 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-4 mb-5">
+    <h3 class="fw-bold text-dark mb-4"><i class="fa-solid fa-heart text-danger"></i> Your Saved Wishlist</h3>
+    
+    <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 g-4">
+        <% if(wishlistListings && wishlistListings.length > 0) { %>
+            <% for(let listing of wishlistListings) { %>
+                <div class="col">
+                    <a href="/listings/<%= listing._id %>" class="text-decoration-none text-dark"> 
+                        <div class="card h-100 listing-card border-0 shadow-sm position-relative">
+                            
+                            <form action="/listings/<%= listing._id %>/wishlist" method="POST" class="position-absolute top-0 end-0 m-3 z-3">
+                                <button type="submit" class="btn p-0 border-0 bg-transparent">
+                                    <i class="fa-solid fa-heart text-danger fs-4"></i>
+                                </button>
+                            </form>
+
+                            <img 
+  src="<%= listing.image && listing.image.length > 0 ? listing.image[0].url : 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=800&q=60' %>" 
+  class="card-img-top rounded-4" 
+  alt="wishlist_img" 
+  style="height: 18rem; object-fit: cover;"
+/>
+                            <div class="card-body px-2 py-2">
+                                <p class="card-text mb-0">
+                                    <b class="fs-5 d-block text-truncate"><%= listing.title %></b>
+                                    <span class="text-secondary">&#8377; <%= listing.price.toLocaleString("en-IN") %></span> / night
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <% } %>
+        <% } else { %>
+            <div class="col-12 text-center py-5 border rounded-4 bg-light">
+                <div class="text-muted fs-1 mb-2"><i class="fa-regular fa-heart"></i></div>
+                <h5 class="fw-bold text-secondary">Your wishlist is empty</h5>
+                <p class="text-muted small">Tap the heart icon on any property to save it here.</p>
+                <a href="/listings" class="btn btn-danger btn-sm px-4 rounded-3 mt-2 fw-semibold">Explore Now</a>
+            </div>
+        <% } %>
+    </div>
+</div>

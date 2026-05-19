@@ -1,0 +1,314 @@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3 mb-5">
+    
+    <div class="card col-lg-8 offset-lg-2 col-md-10 offset-md-1 show-card listing-card border-0">
+    
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <b class="fs-2 text-dark m-0"><%= listing.title %></b>
+        
+        <% if(currUser && currUser.role === 'guest') { %>
+            <form action="/listings/<%= listing._id %>/wishlist" method="POST" class="m-0">
+                <button type="submit" class="btn p-2 border rounded-circle bg-white shadow-sm transition-all" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; outline: none;">
+                    <% if(currUser.wishlist && currUser.wishlist.includes(listing._id.toString())) { %>
+                        <i class="fa-solid fa-heart text-danger fs-4"></i>
+                    <% } else { %>
+                        <i class="fa-regular fa-heart text-dark fs-4"></i>
+                    <% } %>
+                </button>
+            </form>
+        <% } %>
+    </div>
+    
+    <div id="listingImageCarousel" class="carousel slide mb-3 shadow rounded-4 overflow-hidden" data-bs-ride="carousel">
+        
+        <div class="carousel-indicators">
+            <% listing.image.forEach((img, index) => { %>
+                <button type="button" data-bs-target="#listingImageCarousel" data-bs-slide-to="<%= index %>" class="<%= index === 0 ? 'active' : '' %>" aria-current="<%= index === 0 ? 'true' : 'false' %>"></button>
+            <% }) %>
+        </div>
+
+        <div class="carousel-inner">
+            <% listing.image.forEach((img, index) => { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>" data-bs-interval="3500">
+                    <img src="<%= img.url %>" class="d-block w-100" alt="property_image" style="height: 30rem; object-fit: cover;">
+                    
+                    <div class="carousel-caption d-none d-md-block" style="background: rgba(0, 0, 0, 0.6); border-radius: 10px; padding: 5px 15px; width: fit-content; margin: 0 auto 10px auto;">
+                        <p class="m-0 text-white fw-semibold text-capitalize small">
+                            ✨ Inside View: <%= img.filename.replace('_', ' ').replace('listingimage', 'Main Look') %>
+                        </p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <% if(listing.image.length > 1) { %>
+            <button class="carousel-control-prev" type="button" data-bs-target="#listingImageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#listingImageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon bg-dark rounded-circle p-2" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        <% } %>
+    </div>
+
+        <div class="card-body px-0 pt-4 pb-2">
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+        <div class="host-avatar-frame me-3 shadow-sm d-flex align-items-center justify-content-center bg-danger-subtle rounded-circle" style="width: 48px; height: 48px;">
+            <i class="fa-solid fa-user-shield text-danger fs-5"></i>
+        </div>
+        <div>
+            <h6 class="m-0 fw-bold text-dark fs-5 text-capitalize">
+                Stay Hosted by <%= listing.owner && listing.owner.username ? listing.owner.username : "Admin / Wanderlust Host" %>
+            </h6>
+            <span class="badge rounded-pill bg-light text-secondary border px-2.5 py-1 mt-1" style="font-size: 0.75rem;">
+                <i class="fa-solid fa-circle-check text-success"></i> Identity Verified Professional
+            </span>
+        </div>
+    </div>
+
+    <div class="mb-4">
+    <h5 class="fw-bold text-dark mb-2 option-heading-style">About this dynamic stay destination</h5>
+    <p class="card-text dynamic-description-text">
+        <%= listing.description %>
+    </p>
+</div>
+
+    <div class="row row-cols-md-2 row-cols-1 g-3 mb-4 py-3 bg-light-subtle rounded-4 border px-2 mx-0 shadow-sm">
+        <div class="col d-flex align-items-center">
+            <i class="fa-solid fa-wifi text-muted fs-5 me-3" style="width: 24px;"></i>
+            <div><span class="small d-block fw-bold text-dark">High-Speed Wifi</span><small class="text-muted">Complementary network link</small></div>
+        </div>
+        <div class="col d-flex align-items-center">
+            <i class="fa-solid fa-snowflake text-muted fs-5 me-3" style="width: 24px;"></i>
+            <div><span class="small d-block fw-bold text-dark">Air Conditioning</span><small class="text-muted">Climate control system</small></div>
+        </div>
+    </div>
+
+    <div class="d-flex flex-wrap align-items-center justify-content-between pt-2 mt-2 bg-light p-3 rounded-4 border shadow-none">
+        <div>
+            <span class="text-secondary small d-block uppercase fw-bold font-monospace tracking-wider" style="font-size: 0.75rem;">TOTAL INVESTMENT BASEPRICE</span>
+            <div class="d-flex align-items-baseline">
+                <span class="fs-2 fw-extrabold text-dark tracking-tight">&#8377; <%= listing.price.toLocaleString("en-IN") %></span>
+                <span class="text-secondary fw-medium fs-6 ms-1">/ night</span>
+            </div>
+        </div>
+        <div class="text-md-end mt-2 mt-md-0">
+            <span class="text-secondary small d-block fw-bold font-monospace" style="font-size: 0.75rem;">VERIFIED PHYSICAL COORDINATES</span>
+            <span class="fs-5 fw-bold text-dark d-block">
+                <i class="fa-solid fa-location-dot text-danger me-1 drop-shadow-sm"></i> <%= listing.location %>, <%= listing.country %>
+            </span>
+        </div>
+    </div>
+</div>
+    </div>
+
+    <% if(currUser && listing.owner && currUser._id.equals(listing.owner._id)){ %>
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 d-flex gap-3 mb-4 mt-2">
+            <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark edit-btn px-4 rounded-3 fw-bold">Edit Stays Profile</a>
+            <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE">
+                <button class="btn btn-danger px-4 rounded-3 fw-bold">Delete Listing</button>
+            </form>
+        </div>
+    <% } %>
+
+    <% if(currUser && currUser.role === 'guest') { %>
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 mb-4 mt-2">
+            <hr/>
+            <h4 class="fw-bold mb-3"><i class="fa-regular fa-calendar-check text-danger"></i> Book this Destination</h4>
+            <div class="row mx-0 mb-3 p-3 rounded-4 border bg-warning-subtle text-warning-heading shadow-none" style="border-color: rgba(255, 193, 7, 0.3) !important;">
+    <h6 class="fw-bold mb-2 small text-dark">
+        <i class="fa-solid fa-scale-balanced text-warning"></i> Active Stay Policy Guidelines:
+    </h6>
+    <ul class="m-0 ps-3 small text-secondary" style="font-size: 0.8rem; line-height: 1.5;">
+        <li><strong>Advance Limit:</strong> Bookings can only be scheduled up to 1 month (30 days) into the future.</li>
+        <li><strong>100% Free Cancellation:</strong> Cancel 10 or more days prior to your check-in date for a complete full refund.</li>
+        <li><strong>Late Cancellation:</strong> Stays cancelled under 10 days notice are subject to a standard 30% processing penalty deduction fee.</li>
+    </ul>
+</div>
+            <form action="/listings/<%= listing._id %>/bookings" method="POST" class="needs-validation mt-3" novalidate>
+                
+                <div class="row bg-light p-3 rounded-4 mb-3 border mx-0 shadow-sm">
+                    <h6 class="fw-bold text-secondary mb-3">
+                        <i class="fa-solid fa-user-tag text-danger"></i> Billing & Guest Details
+                    </h6>
+                    <div class="col-12 mb-3">
+                        <label for="guestName" class="form-label small fw-semibold">Guest Full Name</label>
+                        <input type="text" id="guestName" name="booking[guestName]" class="form-control rounded-3" placeholder="Enter Full Name" required>
+                        <div class="invalid-feedback">Please enter guest name for invoice.</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="guestEmail" class="form-label small fw-semibold">Contact Email</label>
+                        <input type="email" id="guestEmail" name="booking[guestEmail]" class="form-control rounded-3" value="<%= currUser.email %>" placeholder="name@example.com" required>
+                        <div class="invalid-feedback">Please enter a valid email.</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="guestPhone" class="form-label small fw-semibold">Phone Number</label>
+                        <input type="tel" id="guestPhone" name="booking[guestPhone]" class="form-control rounded-3" placeholder="10-digit mobile number" pattern="[0-9]{10}" required>
+                        <div class="invalid-feedback">Please enter a valid 10-digit phone number.</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="checkin" class="form-label fw-semibold">Check-in Date</label>
+                        <input type="text" id="checkin" name="booking[startDate]" class="form-control datepicker rounded-3" placeholder="Select Date" required>
+                        <div class="invalid-feedback">Please select a valid check-in date.</div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <label for="checkout" class="form-label fw-semibold">Check-out Date</label>
+                        <input type="text" id="checkout" name="booking[endDate]" class="form-control datepicker rounded-3" placeholder="Select Date" required>
+                        <div class="invalid-feedback">Please select a valid check-out date.</div>
+                    </div>
+                </div>
+                
+                <input type="hidden" id="basePrice" value="<%= listing.price %>">
+                <button class="btn btn-danger btn-lg px-5 mt-2 rounded-pill w-100 fw-bold shadow-sm">Confirm Booking Request</button>
+            </form>
+        </div>
+    <% } else if(currUser && currUser.role === 'host') { %>
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 mb-4 mt-2 text-center">
+            <hr/>
+            <div class="alert alert-secondary py-3 border-0 rounded-4 shadow-sm">
+                <p class="mb-0 text-muted"><i class="fa-solid fa-info-circle text-primary"></i> You are logged in as a <strong>Host</strong>. Switch to a Guest account to book stays.</p>
+            </div>
+        </div>
+    <% } else if(!currUser) { %>
+        <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 mb-4 mt-2 text-center">
+            <hr/>
+            <div class="alert alert-warning py-3 border-0 rounded-4 shadow-sm">
+                <p class="mb-0 small"><i class="fa-solid fa-lock text-warning"></i> Please <a href="/login" class="fw-bold text-dark text-decoration-underline">Login</a> to make a booking or submit reviews.</p>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 mb-4 mt-2">
+        <hr/>
+        <h4 class="fw-bold mb-3"><i class="fa-solid fa-map-location-dot text-danger"></i> Where you'll be</h4>
+        <div id="map" class="rounded-4 mt-3 shadow border" style="height: 480px; width: 100%;"></div>
+    </div>
+
+    <div class="col-lg-8 offset-lg-2 col-md-10 offset-md-1 mb-3">
+        <hr/>
+        
+        <% if(currUser && currUser.role === 'guest') { %>
+            <h4 class="fw-bold mb-3">Leave a Review</h4>
+            <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+                <div class="mb-2 mt-3">
+                    <label class="form-label d-block fw-semibold">Rating</label> 
+                    <fieldset class="starability-slot" style="min-height: 35px; width: auto; display: inline-block;">
+                        <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                        <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                        <label for="first-rate1" title="Terrible">1 star</label>
+                        <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                        <label for="first-rate2" title="Not good">2 stars</label>
+                        <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                        <label for="first-rate3" title="Average">3 stars</label>
+                        <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                        <label for="first-rate4" title="Very good">4 stars</label>
+                        <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                        <label for="first-rate5" title="Amazing">5 stars</label>
+                    </fieldset>
+                </div>
+
+                <div class="mb-3">
+                    <label for="comment" class="form-label fw-semibold">Comments</label>
+                    <textarea name="review[comment]" id="comment" cols="30" rows="4" class="form-control rounded-3" placeholder="Share your experience details with other guests..." required></textarea> 
+                    <div class="invalid-feedback">Please add some comments for review</div>
+                </div>
+                <button class="btn btn-dark px-4 rounded-3 fw-bold btn-sm">Submit Feedback</button>
+            </form>
+            <hr class="mt-4"/>
+        <% } else if(currUser && currUser.role === 'host') { %>
+            <p class="text-muted small"><i>Note: Reviews and feedback submission forms are only available for Guest accounts.</i></p>
+            <hr/>
+        <% } %>
+
+        <% if(listing.reviews.length > 0) { %>
+            <h5 class="fw-bold mb-3"><i class="fa-regular fa-comments text-secondary"></i> All Stays Feedback (<%= listing.reviews.length %>)</h5>
+            <div class="row px-2">
+                <% for(let review of listing.reviews) { %>
+                    <div class="card col-md-5 col-12 ms-md-3 mb-3 border rounded-4 shadow-sm">
+                        <div class="card-body py-3">
+                            <h5 class="card-title fw-bold text-dark small mb-1">@<%= review.author ? review.author.username : "anonymous" %></h5>
+                            
+                            <% if(review.sentiment === "Positive") { %>
+                                <span class="badge rounded-pill bg-success-subtle text-success mb-2" style="font-size: 0.75rem;">🟢 Highly Recommended</span>
+                            <% } else if(review.sentiment === "Negative") { %>
+                                <span class="badge rounded-pill bg-danger-subtle text-danger mb-2" style="font-size: 0.75rem;">🔴 Critical Review</span>
+                            <% } else { %>
+                                <span class="badge rounded-pill bg-secondary-subtle text-secondary mb-2" style="font-size: 0.75rem;">⚪ Neutral Feedback</span>
+                            <% } %>
+
+                            <p class="starability-result card-text mt-1" data-rating="<%= review.rating %>"></p>
+                            <p class="card-text text-secondary mt-2"><%= review.comment %></p>
+                            
+                            <% if(currUser && review.author && currUser._id.equals(review.author._id)) { %>
+                                <form class="mb-1 mt-3" method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                    <button class="btn btn-sm btn-outline-danger px-3 rounded-2" style="font-size: 0.75rem;">Remove Review</button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    flatpickr(".datepicker", {
+        minDate: "today", 
+        dateFormat: "Y-m-d",
+    });
+</script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    const locationText = "<%= listing.location %>, <%= listing.country %>";
+
+    // 1. Initial Default View Set Mapping Setup
+    var map = L.map('map').setView([28.6139, 77.2090], 2); 
+
+    // 2. OpenStreetMap Layer Deployment
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // 3. Geocoding Trace Fetch API Loop Protocol Execution
+    const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(locationText)}`;
+
+    fetch(geocodeUrl)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                const lat = parseFloat(data[0].lat);
+                const lon = parseFloat(data[0].lon);
+
+                map.setView([lat, lon], 12);
+                
+                // Fixed OpenStreetMap tile timing loading delay resize fix
+                setTimeout(function() { map.invalidateSize(); }, 400);
+
+                var marker = L.marker([lat, lon]).addTo(map);
+                marker.bindPopup(`<b class="text-danger"><%= listing.title %></b><br>${locationText}`).openPopup();
+            } else {
+                console.log("Geocoding failed for this location, showing default view.");
+                var marker = L.marker([28.6139, 77.2090]).addTo(map);
+                marker.bindPopup(`<b>${locationText}</b><br>Location coordinates not found.`).openPopup();
+            }
+        })
+        .catch(error => {
+            console.error("Geocoding Error:", error);
+            L.marker([28.6139, 77.2090]).addTo(map).bindPopup(`<b>${locationText}</b>`).openPopup();
+        });
+</script>

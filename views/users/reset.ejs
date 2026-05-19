@@ -1,0 +1,53 @@
+<% layout("/layouts/boilerplate") %>
+<div class="row mt-3">
+    <h2 class="col-6 offset-3">Reset Password</h2>
+    <div class="col-6 offset-3 mt-2">
+        <form action="/reset/<%= token %>" method="POST" class="needs-validation" novalidate>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">New Password</label>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" class="form-control" required style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="password" style="border-top-right-radius: 20px; border-bottom-right-radius: 20px;">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                <div class="input-group">
+                    <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required style="border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+                    <button class="btn btn-outline-secondary toggle-password" type="button" data-target="confirmPassword" style="border-top-right-radius: 20px; border-bottom-right-radius: 20px;">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn btn-danger rounded-pill px-4 mt-2">Update Password</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Global Multi-Field Password Toggle Logic
+    document.querySelectorAll(".toggle-password").forEach(button => {
+        button.addEventListener("click", function() {
+            // Target input id extract karna via data-target attribute
+            const targetId = this.getAttribute("data-target");
+            const passwordInput = document.getElementById(targetId);
+            const icon = this.querySelector("i");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                // Slash-eye icon setup for showing visibility state
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordInput.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        });
+    });
+</script>

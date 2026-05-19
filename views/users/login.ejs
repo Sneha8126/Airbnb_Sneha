@@ -1,0 +1,46 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-3">
+    <h1 class="col-6 offset-3">Login</h1>
+    <div class="col-6 offset-3 mb-5">
+        <form action="/login" method="POST" class="needs-validation" novalidate> 
+            
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input name="username" id="username" type="text" class="form-control" required/>
+                <div class="invalid-feedback">Please enter your username</div>
+            </div>
+
+            <div class="mb-3">
+    <label for="password" class="form-label"> Please enter your password</label>
+    <div class="input-group">
+        <input type="password" name="password" id="password" class="form-control" >
+        <button class="btn btn-outline-secondary" type="button" id="loginPasswordToggle" >
+            <i class="fa-solid fa-eye"></i>
+        </button>
+    </div>
+</div>
+<script>
+    document.getElementById("loginPasswordToggle").addEventListener("click", function() {
+        const passwordInput = document.getElementById("password");
+        const icon = this.querySelector("i");
+        
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            icon.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            icon.classList.replace("fa-eye-slash", "fa-eye");
+        }
+    });
+</script>
+
+            <button class="btn btn-success px-4">Login</button>
+            <a href="/forgot" class="d-block mt-2 text-danger text-decoration-none small">Forgot Password?</a>
+            <span class="text-muted small">
+        Don't have an account? 
+        <a href="/signup" class="text-danger text-decoration-underline fw-bold">Register here</a>
+    </span>
+        </form>
+    </div>
+</div>
