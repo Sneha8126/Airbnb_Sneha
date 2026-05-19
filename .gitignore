@@ -1,0 +1,25 @@
+# Dependency folders (Ye folders bahut bade hote hain aur npm install se wapas aa jate hain)
+node_modules/
+jspm_packages/
+
+# Environment variables / Private Keys (Isme aapke passwords aur secrets hote hain)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs (Jo code deploy karne ke liye generate hota hai)
+dist/
+build/
+.next/
+out/
+
+# IDE aur System files (Jo aapka computer/editor automatic banata hai)
+.vscode/
+.idea/
+.DS_Store
+thumbs.db
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
